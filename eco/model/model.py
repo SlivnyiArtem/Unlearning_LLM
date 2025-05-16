@@ -58,14 +58,20 @@ class HFModel:
             )
         }
 
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            (
-                self.model_config["hf_name"]
-                if "openelm" not in model_name.lower()
-                else "meta-llama/Llama-2-7b-hf"
-            ),
-            **tokenizer_args,
-        )
+        try:
+            self.tokenizer = AutoTokenizer.from_pretrained(
+                (
+                    self.model_config["hf_name"]
+                    if "openelm" not in model_name.lower()
+                    else ("meta-llama/Llama-2-7b-hf")
+                ),
+                **tokenizer_args,
+            )
+        except OSError:
+            self.tokenizer = AutoTokenizer.from_pretrained(
+                ( self.model_config["orig_name"]), **tokenizer_args,)
+
+
 
         self.model.generation_config = (
             GenerationConfig(do_sample=False, use_cache=True)

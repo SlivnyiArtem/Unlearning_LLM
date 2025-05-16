@@ -33,6 +33,7 @@ class TOFU(BaseDataset):
         super().__init__()
         self.formatting_tokens = formatting_tokens
         self.eos_token = eos_token if eos_token is not None else ""
+        formatting_tokens_dict = {}
         for k in [
             "prompt_prefix",
             "prompt_suffix",
@@ -40,7 +41,8 @@ class TOFU(BaseDataset):
             "answer_suffix",
         ]:
             (
-                setattr(self, k, formatting_tokens[k])
+                setattr(self, k, formatting_tokens_dict.get(k,""))
+                # setattr(self, k, formatting_tokens[k])
                 if formatting_tokens is not None
                 else setattr(self, k, "")
             )

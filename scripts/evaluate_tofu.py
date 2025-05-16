@@ -1,6 +1,7 @@
 import argparse
 import csv
 import json
+import numpy as np
 import os
 
 import pandas as pd
@@ -101,6 +102,8 @@ print(create_tasks_table(config))
 
 all_summaries = []
 retain_truth_ratio = None
+
+
 
 for i, task in enumerate(tasks):
     print(yaml.dump(task))
@@ -203,17 +206,29 @@ for i, task in enumerate(tasks):
     truth_ratio_entry_name = (
         f"tofu-perturbed_{setup['forget_set_name']}_perturbed_{TruthRatio.name}"
     )
+
+    # --- ????
+
     if task_name == "retain":
         for o in outputs:
             if truth_ratio_entry_name in o:
                 retain_truth_ratio = o[truth_ratio_entry_name]
 
-    if retain_truth_ratio is not None:
+    if retain_truth_ratio is not None and task_name=="retain":
         for o in outputs:
             if truth_ratio_entry_name in o:
                 p_value = ks_test(o[truth_ratio_entry_name], retain_truth_ratio)
-                print(f"KS test p-value: {p_value}")
+                print(f"KS test p-value (RETAIN): {p_value}")
                 summaries.append({"ks_test_p_value": p_value})
+                break
+    elif retain_truth_ratio is not None:
+        for o in outputs:
+            if truth_ratio_entry_name in o:
+                p_value = ks_test(o[truth_ratio_entry_name], retain_truth_ratio)
+                print(f"KS test p-value (FORGET_QUALITY): {p_value}")
+                summaries.append({"ks_test_p_value": p_value})
+                break
+
 
     model.generation_config.max_length = 200
     generation_jobs = [

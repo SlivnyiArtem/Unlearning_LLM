@@ -2,6 +2,7 @@ import argparse
 
 import numpy as np
 import torch
+from datasets import DatasetDict, Dataset
 from transformers import (
     AutoModelForSequenceClassification,
     AutoTokenizer,
@@ -54,11 +55,13 @@ def compute_metrics(eval_pred):
 model_name = "roberta-base"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-if args.dataset == "tofu":
+print(args)
+
+if args.dataset_name== "tofu":
     assert args.tofu_subset_name is not None, "Must provide tofu_subset_name"
     data_module = dataset_classes[args.dataset_name](tokenizer, max_length=512)
     dataset = data_module.load_dataset_for_classification(args.tofu_subset_name)
-elif args.dataset == "mmlu-subset":
+elif args.dataset_name == "mmlu-subset":
     assert args.mmlu_subset_name is not None, "Must provide mmlu_subset_name"
     subset_to_cls = {
         "economics": [
@@ -107,7 +110,12 @@ data_collator = DataCollatorWithPadding(
     tokenizer=tokenizer, padding="longest", return_tensors="pt"
 )
 
-tokenized_datasets = dataset.map(tokenize_function, batched=True)
+print(dataset.items())
+tokenized_datasets = DatasetDict({
+    name: dataset.map(tokenize_function, batched=True)
+    for name, dataset in dataset.items() if type(dataset) is Dataset
+})
+
 max_length = max([len(x) for x in tokenized_datasets["train"]["input_ids"]])
 print(f"Maximum train length: {max_length}")
 max_length = max([len(x) for x in tokenized_datasets["test"]["input_ids"]])
