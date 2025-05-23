@@ -49,9 +49,11 @@ class TOFU(BaseDataset):
 
     def download(self):
         data_subsets = {
-            s: load_dataset(self.path, s, keep_in_memory=True, trust_remote_code=True)[
-                "train"
-            ]
+            s: load_dataset(self.path, s, keep_in_memory=True, trust_remote_code=True)["train"]
+            .train_test_split(test_size=0.9, seed=42)["train"]
+            # s: load_dataset(self.path, s, keep_in_memory=True, trust_remote_code=True)[
+            #     "train"
+            # ]
             for s in self.subsets
         }
         self.dataset = DatasetDict(data_subsets)
