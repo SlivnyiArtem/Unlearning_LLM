@@ -1,3 +1,16 @@
+# Disclaimer:
+This branch contains code borrowed from the repository [https://github.com/chrisliu298/llm-unlearn-eco].
+
+I do not claim original authorship or any other affiliation with the original repository. Since the original project page [https://chrisliu298.ai/llm-unlearn-eco-project-page/] is no longer available, I was unable to locate licensing information for the original project.
+
+This branch contains minor changes and was used to evaluate the unlearning quality of the models I researched.
+
+The original README is below.
+
+
+
+
+
 # [NeurIPS 2024] Large Language Model Unlearning via Embedding-Corrupted Prompts
 
 This repository contains the code of our paper [Large Language Model Unlearning via Embedding-Corrupted Prompts](https://arxiv.org/abs/2406.07933). In this paper, we propose an extremely lightweight LLM unlearning scheme for powerful non-open-weight LLMs, approaching LLM unlearning from the input perspective.
