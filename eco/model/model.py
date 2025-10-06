@@ -23,6 +23,8 @@ class HFModel:
             BitsAndBytesConfig(
                 load_in_4bit=self.model_config["load_in_4bit"],
                 load_in_8bit=self.model_config["load_in_8bit"],
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_compute_dtype=torch.float16,
             )
             if self.model_config["load_in_4bit"] or self.model_config["load_in_8bit"]
             else None

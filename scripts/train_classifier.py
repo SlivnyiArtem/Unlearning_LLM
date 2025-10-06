@@ -1,5 +1,5 @@
 import argparse
-
+import wandb
 import numpy as np
 import torch
 from datasets import DatasetDict, Dataset
@@ -23,6 +23,8 @@ from eco.dataset import (
     MMLUWithoutPhysicsMath,
     dataset_classes,
 )
+
+wandb.init(project="eco_unlearning")
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -145,7 +147,7 @@ training_args = TrainingArguments(
     per_device_eval_batch_size=16,
     num_train_epochs=30,
     logging_strategy="steps",
-    logging_steps=1000,
+    logging_steps=100,
     do_eval=True,
     evaluation_strategy="steps",
     eval_steps=1000,
@@ -155,7 +157,7 @@ training_args = TrainingArguments(
     load_best_model_at_end=True,
     metric_for_best_model="forget_errors",
     greater_is_better=False,
-    report_to="none",
+    report_to="wandb",
 )
 
 trainer = CustomTrainer(

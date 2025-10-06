@@ -59,8 +59,69 @@ class TokenClassifier(Classifier):
     def predict(self, prompt):
         return self.model(prompt, batch_size=self.batch_size)
 
+    def predict_target_token_labels_demo(self, prompt, target_tokenizer):
+        predictions = self.predict(prompt)
+        # print([p for p in prompt])
+        print([d for d in predictions])
+        # Get indices of labeled tokens
+
+        labeled_indices = [
+            d["index"] for d in predictions if self.condition_fn(d)
+        ]
+
+        # labeled_indices = [
+        #     [d["index"] for d in pred if self.condition_fn(d)] for pred in predictions
+        # ]
+
+        tokenized_prompts = [
+            self.tokenizer(prompt, return_offsets_mapping=True)
+        ]
+
+        print(len(prompt))
+        print(len(tokenized_prompts))
+        print(labeled_indices)
+        print(tokenized_prompts)
+
+        # Mark tokens as labeled or not for tokens in all prompts
+        token_labels = [
+            [
+                1 if i in labeled_indices[j] else 0
+                for i in range(len(tokenized_prompts[j]["input_ids"]))
+            ]
+            for j in range(len(prompt))
+        ]
+        target_tokenized_prompts = [
+            target_tokenizer(p, return_offsets_mapping=True) for p in prompt
+        ]
+        # Convert to the target tokenization
+        target_token_labels = [
+            match_labeled_tokens(
+                token_labels[i],
+                tokenized_prompts[i]["offset_mapping"],
+                target_tokenized_prompts[i]["offset_mapping"],
+            )
+            for i in range(len(prompt))
+        ]
+        # If all tokens are unlabeled, mark all but the last tokens as labeled as a safety measure.
+        # Note that this is just an implementation decision and can be changed.
+        target_token_labels_processed = []
+        for token_labels in target_token_labels:
+            if all(label == 0 for label in token_labels):
+                target_token_labels_processed.append(
+                    [1] * (len(token_labels) - 1) + [0]
+                )
+            else:
+                target_token_labels_processed.append(token_labels)
+
+        target_token_labels_processed = pad_to_same_length(
+            target_token_labels_processed, padding_side=target_tokenizer.padding_side
+        )
+        return target_token_labels_processed
+
     def predict_target_token_labels(self, prompt, target_tokenizer):
         predictions = self.predict(prompt)
+        print(prompt)
+        print([d for d in predictions])
         # Get indices of labeled tokens
         labeled_indices = [
             [d["index"] for d in pred if self.condition_fn(d)] for pred in predictions
