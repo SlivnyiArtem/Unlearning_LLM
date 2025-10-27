@@ -1,6 +1,6 @@
 Ноутбук с прекодом методов:
 
-https://cloud.ru/docs/foundation-models/ug/topics/pricing?source-platform=Evolution
+https://colab.research.google.com/drive/1KxSiFjg1cZwFh7_8eSjPE2hUJvtjXMPh?usp=sharing
 
 Материалы в работе
 
