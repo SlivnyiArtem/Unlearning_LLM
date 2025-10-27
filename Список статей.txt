@@ -1,3 +1,7 @@
+Ноутбук с прекодом методов:
+
+https://cloud.ru/docs/foundation-models/ug/topics/pricing?source-platform=Evolution
+
 Материалы в работе
 
 [2410.11143v1]
